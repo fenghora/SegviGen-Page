@@ -1,0 +1,290 @@
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>SegviGen: Repurposing 3D Generative Model for Part Segmentation</title>
+        <link rel="icon" href="favicon.png">
+        <link rel="stylesheet" href="fonts/avenir-next/stylesheet.css">
+        <link rel="stylesheet" href="fonts/segoe-print/stylesheet.css">
+        <link rel="stylesheet" href="icons/style.css">
+        <link rel="stylesheet" href="css/window.css">
+        <link rel="stylesheet" href="css/carousel.css">
+        <link rel="stylesheet" href="css/selection_panel.css">
+        <link rel="stylesheet" href="css/main.css">
+        <script src="js/window.js"></script>
+        <script src="js/carousel.js"></script>
+        <script src="js/selection_panel.js"></script>
+        <script src="js/generation.js"></script>
+        <script src="js/editing.js"></script>
+        <script src="js/application.js"></script>
+		<script src="js/main.js"></script>
+        <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    </head>
+    <body>
+        <div id="main">
+            <!-- <div id="logo">
+                <video autoplay playsinline loop muted src="assets/logo.mp4" poster="assets/logo.jpg"></video>*
+            </div> -->
+            <div id="title" class="x-gradient-font">
+                <div class="title-main">SegviGen</div>
+                <div class="title-sub">Repurposing 3D Generative Model for Part Segmentation</div>
+              </div>
+            <div id="authors">
+                <div><a class="link">Lin Li</a><sup>2*</sup></div>
+                <div><a class="link">Haoran Feng</a><sup>3*</sup></div>
+                <div><a class="link" href="https://huanngzh.github.io/">Zehuan Huang</a><sup>1†</sup></div>
+                <div><a class="link">Haohua Chen</a><sup>1</sup></div>
+                <div><a class="link">Wenbo Nie</a><sup>1</sup></div>
+                <div><a class="link">Shaohua Hou</a><sup>1</sup></div>
+                <div><a class="link">Keqing Fan</a><sup>1</sup></div>
+                <div><a class="link">Pan Hu</a><sup>1</sup></div>
+                <!-- <div class="break"></div> -->
+                <div><a class="link">Sheng Wang</a><sup>4</sup></div>
+                <div><a class="link">Buyu Li</a><sup>4</sup></div>
+                <div><a class="link" href="https://lucassheng.github.io/">Lu Sheng</a><sup>1✉</sup></div>
+            </div>
+            <div id="institution">
+                <div><sup>1</sup><a class="link" href="https://www.buaa.edu.cn/">Beihang University</a></div>
+                <div><sup>2</sup><a class="link" href="https://www.ruc.edu.cn/">Renmin University of China</a></div>
+                <div><sup>3</sup><a class="link" href="https://www.tsinghua.edu.cn/">Tsinghua University</a></div>
+                <div><sup>4</sup><a class="link" href="https://bambulab.com/zh">OriginArk</a></div>
+            </div>
+            <div id="institution">
+                <div><sup>*</sup>Equal Contribution</div>
+                <div><sup>†</sup>Project Lead</div>
+                <div><sup>✉</sup>Corresponding Author</div>
+            </div>
+            <!-- <div class="x-center-text" style="font-size: 20px; font-weight: 700; color: #5f5f5f;">
+                CVPR 2025 Highlight
+            </div> -->
+            <div id="links">
+                <div><a id="paper" href="">Paper</a></div>
+                <div><a id="arxiv" href="">Arxiv</a></div>
+                <div><a id="code" href="">Code</a></div>
+                <!-- <div><a id="demo" href="https://huggingface.co/spaces/Microsoft/TRELLIS">Demo</a></div> -->
+            </div>
+            <div id="teaser" style="position: relative; width: 100%;">
+                <video
+                  id="teaserVideo"
+                  autoplay
+                  playsinline
+                  muted
+                  preload="auto"
+                  src="assets/teaser.mp4"
+                  style="width: 100%; display: block;"
+                ></video>
+              
+                <img
+                  id="teaserImage"
+                  src="assets/teaser.png"
+                  alt="Teaser"
+                  style="width: 100%; display: none;"
+                />
+            </div>
+            <div class="x-center-text" style="font-size: 20px; font-weight: 500; color: #3f3f3f;">
+                <b>TL;DR:</b>  A 3D part segmentation framework that <i><b>repurposes the structured priors in pretrained native 3D generative models</b></i>, supports <i><b>multiple segmentation tasks</b></i>, and achieves <i><b>state-of-the-art results with minimal supervision</b></i>.
+            </div>
+            <div id="abstract" class="x-gradient-block">
+                We introduce <span style="font-size: 18px; font-weight: 650;">SegviGen, a framework that repurposes native 3D generative models for 3D part segmentation.</span>
+                Existing pipelines either lift strong 2D priors into 3D via distillation or multi-view mask aggregation, 
+                often suffering from cross-view inconsistency and blurred boundaries, 
+                or explore native 3D discriminative segmentation, 
+                which typically requires large-scale annotated 3D data and substantial training resources.
+                In contrast, SegviGen leverages the structured priors encoded in pretrained 3D generative model to induce segmentation through distinctive part colorization, establishing a novel and efficient framework for part segmentation.
+                Specifically, SegviGen encodes an input 3D asset and predicts part-indicative colors on active voxels of a geometry-aligned reconstruction. 
+                It supports interactive part segmentation, full segmentation, and full segmentation with 2D guidance in a unified framework.
+                Extensive experiments show that <span style="font-size: 18px; font-weight: 650;">SegviGen improves over the prior state of the art by 40% on interactive part segmentation 
+                and by 15% on full segmentation, while using only 0.32% of the training data.</span>
+                It demonstrates that pretrained 3D generative priors transfer effectively to 3D part segmentation, enabling strong performance with limited supervision.
+            </div>
+            
+            <div class="x-section-title"><div class="x-gradient-font">Interactive Demo</div></div>
+            <div id="interactive_demo"></div>
+            <p>
+                Thanks to <a href="https://xh38.github.io/" target="_blank" rel="noopener noreferrer">Hao Xu</a> for sharing the Blender source files that helped us build this demo.
+            </p>
+
+            <!-- <div class="x-section-title"><div class="x-gradient-font">Segmentation <span style="font-size: 40px; font-weight:600;">|</span> Interactive Part Segmentation</div></div>
+            <p>
+                <span style="font-size: 20px; font-weight: 600;">S</span><span style="font-size: 16px; font-weight: 700;">egviGen</span>
+                enables interactive 3D part segmentation conditioned on user-provided clicks.
+            </p>
+            <div id="results-img2"></div> -->
+            
+            <div class="x-section-title"><div class="x-gradient-font">Segmentation <span style="font-size: 40px; font-weight:600;">|</span> Full Segmentation</div></div>
+            <p>
+                <span style="font-size: 20px; font-weight: 600;">L</span><span style="font-size: 16px; font-weight: 700;">aviGen</span>
+                supports full-parts 3D segmentation, decomposing a single 3D model into complete part-level components. Click on the cards to view extracted GLB files.
+            </p>
+            <div id="full_segmentation"></div>
+
+            <div class="x-section-title"><div class="x-gradient-font">Segmentation <span style="font-size: 40px; font-weight:600;">|</span> Full Segmentation with 2D Guidance</div></div>
+            <p>
+                <span style="font-size: 20px; font-weight: 600;">L</span><span style="font-size: 16px; font-weight: 700;">aviGen</span>
+                also supports full-parts 3D segmentation conditioned on 2D segmentation maps, which provides explicit spatial priors for user-guided, more precise, and customizable part-level segmentation. Click on the cards to view extracted GLB files.
+            </p>
+            <div id="full_segmentation_2d"></div>
+
+            <!-- <div class="x-section-title"><div class="x-gradient-font">Applications <span style="font-size: 40px; font-weight:600;">|</span> Part-aware Object Editing</div></div>
+            <p>
+                <span style="font-size: 20px; font-weight: 600;">V</span><span style="font-size: 16px; font-weight: 700;">oxHammer</span>
+                enables flexible editing of part-aware generated 3D assets.
+            </p>
+            <div id="results-manipulation"></div> -->
+
+            <!-- <div class="x-section-title"><div class="x-gradient-font">Applications <span style="font-size: 40px; font-weight:600;">|</span> Compositional 3D Scene Editing</div></div>
+            <p>
+                <span style="font-size: 20px; font-weight: 600;">V</span><span style="font-size: 16px; font-weight: 700;">oxHammer</span>
+                further extends to compositional 3D scene editing.
+            </p>
+            <div id="results-manipulation-scene"></div> -->
+
+            <!-- <div class="x-section-title"><div class="x-gradient-font">Applications <span style="font-size: 40px; font-weight:600;">|</span> NeRF or 3DGS Editing</div></div>
+            <p>
+                <span style="font-size: 20px; font-weight: 600;">V</span><span style="font-size: 16px; font-weight: 700;">oxHammer</span>
+                also generalizes NeRF or 3DGS editing.
+            </p>
+            <div id="results-manipulation-gs"></div> -->
+
+            <!-- <div class="x-section-title"><div class="x-gradient-font">Generation <span style="font-size: 40px; font-weight:600;">|</span> Text to 3D Asset</div></div>
+            <p>All text prompts are generated by GPT-4. Click on the cards to view extracted GLB files.</p>
+            <div id="results-txt2"></div> -->
+
+            <!-- <div class="x-section-title"><div class="x-gradient-font">Generation <span style="font-size: 40px; font-weight:600;">|</span> Image to 3D Asset</div></div>
+            <p>Image prompts are generated by DALL-E 3. Click on the cards to view extracted GLB files.</p>
+            <div id="results-img2"></div> -->
+
+            <!-- <div class="x-section-title"><div class="x-gradient-font">Editing <span style="font-size: 40px; font-weight:600;">|</span> Asset Variants</div></div>
+            <p>
+                <span style="font-size: 16px; font-weight: 600;">T</span><span style="font-size: 12px; font-weight: 700;">RELLIS</span>
+                can generates variants of a given 3D asset coherent with given text prompts.
+            </p>
+            <div id="results-variants"></div>
+
+            <div class="x-section-title"><div class="x-gradient-font">Editing <span style="font-size: 40px; font-weight:600;">|</span> Local Manipulation</div></div>
+            <p>
+                <span style="font-size: 16px; font-weight: 600;">T</span><span style="font-size: 12px; font-weight: 700;">RELLIS</span>
+                can manipulate targeted local regions of a given 3D asset according to given text or image prompts.
+            </p>
+            <div id="results-manipulation"></div>
+
+            <div class="x-section-title"><div class="x-gradient-font">Application <span style="font-size: 40px; font-weight:600;">|</span> 3D Art Designs</div></div>
+            <p>
+                Compositing the high-quality 3D assets generated by <span style="font-size: 16px; font-weight: 600;">T</span><span style="font-size: 12px; font-weight: 700;">RELLIS</span>,
+                complex and vibrant 3D art designs can be created with ease.
+            </p>
+            <div id="results-scene"></div> -->
+
+            <div class="x-section-title"><div class="x-gradient-font">Methodology</div></div>
+            <p>
+                <img src="assets/pipeline.png" alt="Pipeline of the method" style="width: 100%;">
+            </p>
+            <!-- <p>
+                We introduce Structured LATents (<span style="font-size: 16px; font-weight: 600;">SL</span><span style="font-size: 12px; font-weight: 700;">AT</span>),
+                a unified 3D latent representation for high-quality, versatile 3D generation. <span style="font-size: 16px; font-weight: 600;">SL</span><span style="font-size: 12px; font-weight: 700;">AT</span>
+                marries sparse structures with powerful visual representations. It defines local latents on active voxels intersecting the object's surface.
+                The local latents are encoded by fusing and processing image features from densely rendered views of the 3D asset, while attaches them onto active voxels.
+                These features, derived from powerful pretrained vision encoders, capture detailed geometric and visual characteristics, complementing the coarse structure provided by the active voxels.
+                Different decoders can then be applied to map <span style="font-size: 16px; font-weight: 600;">SL</span><span style="font-size: 12px; font-weight: 700;">AT</span> to diverse 3D representations of high quality.
+            </p>
+            <p>
+                Building on <span style="font-size: 16px; font-weight: 600;">SL</span><span style="font-size: 12px; font-weight: 700;">AT</span>, we train a family of large 3D generation models, dubbed <span style="font-size: 16px; font-weight: 600;">T</span><span style="font-size: 12px; font-weight: 700;">RELLIS</span>, with text prompts or images as conditions.
+                A two stage pipeline is applied which first generates the sparse structure of <span style="font-size: 16px; font-weight: 600;">SL</span><span style="font-size: 12px; font-weight: 700;">AT</span>, followed by generating the latent vectors for non-empty cells.
+                We employ rectified flow transformers as our backbone models and adapt them properly to handle the sparsity in <span style="font-size: 16px; font-weight: 600;">SL</span><span style="font-size: 12px; font-weight: 700;">AT</span>.
+                We train Trellis with up to 2 billion parameters on a large dataset of carefully-collected 3D assets.
+                <span style="font-size: 16px; font-weight: 600;">T</span><span style="font-size: 12px; font-weight: 700;">RELLIS</span> can create high-quality 3D assets with detailed geometry and vivid texture, significantly surpassing previous methods.
+                Moreover, it can easily generate 3D assets with different output formats to meet diverse downstream requirements.
+            </p> -->
+            <p>
+                <span style="font-size: 18px; font-weight: 600;">S</span><span style="font-size: 16px; font-weight: 700;">eviGen</span>
+                reformulates 3D part segmentation as <b>part-wise colorization</b> on a structured 3D representation: 
+                instead of predicting discrete part IDs, it predicts <b>part-indicative voxel colors</b> that align naturally with the pretrained generative prior. 
+                Different segmentation settings are instantiated by how the colorization target is constructed. 
+                For <b>interactive</b> segmentation, user-provided clicks specify the target part and we use a <b>binary</b> colorization. 
+                For <b>full</b> segmentation, each part is assigned a distinct color using a <b>randomly sampled palette</b>, and we further use <b>multiple random color assignments</b> during training to prevent the model from overfitting to any specific color-part correspondence. 
+                For <b>2D-guided full</b> segmentation, a rendered 2D part-color map provides explicit guidance, and the 3D colorization is generated to be consistent with the 2D assignments.
+            </p>
+            
+            <p>
+                Given an input asset, we encode it into a geometry latent <b>z</b> that anchors generation to the underlying shape and fixes the active-voxel support; 
+                the colorization target is encoded as a color latent <b>y</b>, and generation proceeds by denoising from a noisy state <b>y<sub>t</sub></b> 
+                conditioned on <b>(y<sub>t</sub>, z)</b>. 
+                User interaction is injected via <b>point embeddings</b>: each click is encoded as a <b>3D coordinate token</b> paired with a <b>shared learnable point feature</b>, 
+                and the resulting point embeddings are appended (with <b>zero-padding</b> to a fixed length) to provide a unified conditioning interface across tasks.
+                For 2D guidance, the 2D segmentation map is encoded into guidance tokens and injected through cross-attention, enabling controllable granularity and palette behavior. 
+                Finally, a <b>task embedding</b> is fused with the timestep embedding to make the model explicitly task-aware under a shared parameterization.
+            </p>
+            <div class="x-section-title"><div class="x-gradient-font">Citation</div></div>
+            <p>
+                If you find our work useful, please consider citing:
+            </p>
+            <p class="bibtex x-gradient-block">
+<!-- @article{xiang2024structured,
+    title   = {Structured 3D Latents for Scalable and Versatile 3D Generation},
+    author  = {Xiang, Jianfeng and Lv, Zelong and Xu, Sicheng and Deng, Yu and Wang, Ruicheng and 
+               Zhang, Bowen and Chen, Dong and Tong, Xin and Yang, Jiaolong},
+    journal = {arXiv preprint arXiv:2412.01506},
+    year    = {2024}
+} -->
+            </p>
+            <!-- <div style="height: 100px;"> </div> -->
+            <p class="x-note"> The website template is borrowed from <a href="https://github.com/microsoft/TRELLIS/tree/website" target="_blank">TRELLIS</a ></p>
+            <!-- <p class="x-note">
+                <b style="line-height: 32px;">Responsible AI Considerations</b><br>
+                <i>
+                    TRELLIS is purely a research project. Responsible AI considerations were factored into all stages. The datasets used in this paper are public and have been reviewed to ensure there is no personally identifiable information or harmful content. However, as these datasets are sourced from the Internet, potential bias may still be present. Currently the model excels at generating artistic-style 3D assets and its capability in generating photorealistic real-world objects is limited.
+                </i>
+            </p>
+            <p class="x-note">
+                <b style="line-height: 32px;">Material Disclaimer</b><br>
+                <i>
+                The materials made available on this page are provided solely for academic and research purposes in connection with the exploration of text-to-3D and image-to-3D generation technologies, as described in the publication accessible at https://arxiv.org/abs/2412.01506. These materials are not intended for commercial exploitation or use.
+If you believe that any content on this page infringes upon your intellectual property rights, including but not limited to copyright, please notify us by submitting a takedown request via email to jiaoyan (at) microsoft.com.
+                </i>
+            </p> -->
+        </div>
+        <!-- <div id="bottombar">
+            <div class="row">
+                <div><span>T<span style="font-size: 10px;">RELLIS</span>:</span> Structured 3D Latents for Scalable and Versatile 3D Generation</div>
+                <div style="display: flex; flex-direction: row; gap: 8px;">
+                    <a href="https://github.com/microsoft/TRELLIS/issues">Contact Us on GitHub</a>
+                    <span style="width: 1px; background-color: rgba(255, 255, 255, 0.7);"></span>
+                    <a href="https://go.microsoft.com/fwlink/?LinkId=521839">Privacy & Cookies</a>
+                    <span style="width: 1px; background-color: rgba(255, 255, 255, 0.7);"></span>
+                    <a href="https://go.microsoft.com/fwlink/?linkid=2259814">Consumer Health Privacy</a>
+                    <span style="width: 1px; background-color: rgba(255, 255, 255, 0.7);"></span>
+                    <a href="https://go.microsoft.com/fwlink/?LinkID=246338">Terms of Use</a>
+                    <span style="width: 1px; background-color: rgba(255, 255, 255, 0.7);"></span>
+                    <a href="https://go.microsoft.com/fwlink/?linkid=2196228">Trademarks</a>
+                    <span style="width: 1px; background-color: rgba(255, 255, 255, 0.7);"></span>
+                    <span>© 2025 Microsoft</span>
+                </div>
+            </div>
+        </div> -->
+    </body>
+</html>
+
+<script>
+    (function () {
+      const video = document.getElementById("teaserVideo");
+      const img = document.getElementById("teaserImage");
+  
+      function showImageOnly() {
+        video.pause();
+        video.removeAttribute("src"); // 可选：释放资源，避免继续占用解码/带宽
+        video.load();
+        video.style.display = "none";
+        img.style.display = "block";
+      }
+  
+      // 播放结束后切换到图片
+      video.addEventListener("ended", showImageOnly, { once: true });
+  
+      // 可选：如果自动播放被浏览器拦截，也直接显示图片
+      const p = video.play();
+      if (p && typeof p.catch === "function") p.catch(showImageOnly);
+  
+      // 可选：视频加载/解码出错也显示图片
+      video.addEventListener("error", showImageOnly, { once: true });
+    })();
+  </script>
