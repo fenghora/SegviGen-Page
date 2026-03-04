@@ -8,7 +8,7 @@ from pathlib import Path
 # 你只需要改这里
 # =========================
 ROOT_DIR = "/media/nfs/tmp_data/fenghr/SegviGen-Page"     # 项目根目录
-JS_FILE  = "/media/nfs/tmp_data/fenghr/SegviGen-Page/assets/outputs_2d/tmp.js"            # 你的 js 文件路径（或改成你实际文件名）
+JS_FILE  = "/media/nfs/tmp_data/fenghr/SegviGen-Page/assets/interactive_seg_results/interactive_segmentation_items.js"            # 你的 js 文件路径（或改成你实际文件名）
 KEEP_BAK = False                                            # True: 备份原视频为 .bak
 DRY_RUN  = False                                            # True: 只打印不执行转换
 
